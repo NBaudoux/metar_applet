@@ -43,11 +43,9 @@ class MetarApplet extends Applet.TextApplet {
             
             if (success) {
                 const output = stdout.toString().trim();
-                // Extract just the station code and key info
                 const lines = output.split('\n');
                 const metarLine = lines[0] || output;
                 
-                // Truncate if too long for taskbar
                 let displayText = metarLine.substring(0, 50);
                 if (metarLine.length > 50) {
                     displayText += "...";
