@@ -51,8 +51,9 @@ class MetarApplet extends Applet.TextApplet {
                     displayText += "...";
                 }
                 
+                const now = new Date();
                 this.set_applet_label(displayText);
-                this.set_applet_tooltip(output);
+                this.set_applet_tooltip("Last checked at "+now.getUTCHours()+now.getUTCMinutes()+"Z - Click to update now.");
             } else {
                 this.set_applet_label("METAR: Error");
                 this.set_applet_tooltip("Failed to fetch METAR data");
