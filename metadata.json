@@ -1,0 +1,15 @@
+{
+  "uuid": "metar-display@local",
+  "name": "METAR Display",
+  "description": "Displays METAR for EKRK at :20 and :50 minutes",
+  "cinnamon-version": [
+    "5.0",
+    "5.2",
+    "5.4",
+    "5.6",
+    "6.0"
+  ],
+  "version": "1.0",
+  "author": "Your Name"
+}
+
