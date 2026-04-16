@@ -4,12 +4,15 @@ const Util = imports.misc.util;
 const Mainloop = imports.mainloop;
 const GLib = imports.gi.GLib;
 
+const CHECK_TIME = [20, 50];
+const CHECK_BUFFER = 4;
+
 class MetarApplet extends Applet.TextApplet {
     constructor(metadata, orientation, panelHeight, instanceId) {
         super(orientation, panelHeight, instanceId);
         
         this.set_applet_label("METAR: Loading...");
-        this.set_applet_tooltip("EKRK METAR Display");
+        this.set_applet_tooltip("");
         
         this.setupScheduler();
     }
@@ -25,9 +28,9 @@ class MetarApplet extends Applet.TextApplet {
     
     checkAndRunMetar() {
         const now = new Date();
-        const minutes = now.getMinutes();
+        const minutes = now.getMinutes() - CHECK_BUFFER;
         
-        if (minutes === 20 || minutes === 50) {
+        if (minutes in CHECK_TIME) {
             this.runMetar();
         }
     }
