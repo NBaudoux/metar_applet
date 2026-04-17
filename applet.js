@@ -30,7 +30,7 @@ class MetarApplet extends Applet.TextApplet {
     
     checkAndRunMetar() {
         const now = new Date();
-        const minutes = now.getMinutes() - CHECK_BUFFER;
+        const minutes = now.getUTCMinutes() - CHECK_BUFFER;
 
         if (CHECK_TIME.includes(minutes) || this.firstExecution) {
             this.runMetar();
