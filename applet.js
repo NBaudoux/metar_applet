@@ -21,7 +21,6 @@ class MetarApplet extends Applet.TextApplet {
     setupScheduler() {
         this.runMetar();
         const delaySeconds = this.getTimeBeforeNextUpdate();
-        global.log("Next update in "+delaySeconds+" seconds");
         Mainloop.timeout_add_seconds(delaySeconds, () => {
             this.runMetar();            
             this.scheduleNextUpdate();
@@ -31,12 +30,10 @@ class MetarApplet extends Applet.TextApplet {
 
     getTimeBeforeNextUpdate() {
         const minutes = new Date().getUTCMinutes() - CHECK_BUFFER;
-        global.log(Math.min.apply(null, CHECK_TIME.map(t => (60+t-minutes)%60)));
         return Math.min.apply(null, CHECK_TIME.map(t => (60+t-minutes)%60).filter(v => v > 0)) * 60;
     }
 
     scheduleNextUpdate() {
-        global.log("Next update in "+this.getTimeBeforeNextUpdate()+" seconds");
         Mainloop.timeout_add_seconds(this.getTimeBeforeNextUpdate(), () => {
             this.runMetar();
             return true; // Repeat
