@@ -5,6 +5,9 @@ const Mainloop = imports.mainloop;
 const GLib = imports.gi.GLib;
 const Settings = imports.ui.settings;
 
+// Custom imports
+const { isValidICAO } = require('./util/icaovalidator');
+
 const CHECK_TIME = [20, 50];
 const CHECK_BUFFER = 4;
 const AD_ICAO_PROP = "AD_ICAO";
@@ -50,13 +53,8 @@ class MetarApplet extends Applet.TextApplet {
         }
     }
 
-    isValidICAO(id) {
-        if (typeof id !== 'string') return false;
-        return /^[A-Z]{4}$/.test(id.trim().toUpperCase());
-    }
-
     validateIcaoAndRun(id){
-        if(!this.isValidICAO(id)) return;
+        if(!isValidICAO(id)) return;
         this.runMetar();
     }
     
