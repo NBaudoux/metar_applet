@@ -2,6 +2,6 @@
     "AD_ICAO": {
         "type" : "entry",
         "default": "EKRK",
-        "description": "AD ICAO you want to get the METAR from"
+        "description": "AD's ICAO you want to get the METAR from"
     }
 }
