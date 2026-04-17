@@ -6,6 +6,7 @@ const GLib = imports.gi.GLib;
 
 const CHECK_TIME = [20, 50];
 const CHECK_BUFFER = 4;
+const AD_ICAO = "EKRK"
 
 class MetarApplet extends Applet.TextApplet {
     constructor(metadata, orientation, panelHeight, instanceId) {
@@ -39,7 +40,7 @@ class MetarApplet extends Applet.TextApplet {
     
     runMetar() {
         try {
-            let [success, stdout, stderr, exitCode] = GLib.spawn_command_line_sync("metar EKRK");
+            let [success, stdout, stderr, exitCode] = GLib.spawn_command_line_sync("metar "+AD_ICAO);
             
             if (success) {
                 const output = stdout.toString().trim();
