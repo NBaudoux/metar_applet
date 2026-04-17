@@ -49,10 +49,20 @@ class MetarApplet extends Applet.TextApplet {
             this.firstExecution = false;
         }
     }
+
+    isValidICAO(id) {
+        if (typeof id !== 'string') return false;
+        return /^[A-Z]{4}$/.test(id.trim().toUpperCase());
+    }
+
+    validateIcaoAndRun(id){
+        if(!this.isValidICAO(id)) return;
+        this.runMetar();
+    }
     
     runMetar() {
         try {
-            let [success, stdout, stderr, exitCode] = GLib.spawn_command_line_sync("metar "+AD_ICAO);
+            let [success, stdout, stderr, exitCode] = GLib.spawn_command_line_sync("metar "+this.AD_ICAO);
             
             if (success) {
                 const output = stdout.toString().trim();
