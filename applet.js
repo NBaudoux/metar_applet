@@ -3,20 +3,32 @@ const St = imports.gi.St;
 const Util = imports.misc.util;
 const Mainloop = imports.mainloop;
 const GLib = imports.gi.GLib;
+const Settings = imports.ui.settings;
 
 const CHECK_TIME = [20, 50];
 const CHECK_BUFFER = 4;
-const AD_ICAO = "EKRK"
+const AD_ICAO_PROP = "AD_ICAO";
 
 class MetarApplet extends Applet.TextApplet {
     constructor(metadata, orientation, panelHeight, instanceId) {
         super(orientation, panelHeight, instanceId);
+        this.setupSettings(metadata["uuid"], instanceId);
         
         this.set_applet_label("METAR: Loading...");
         this.set_applet_tooltip("");
         this.firstExecution = true
         
         this.setupScheduler();
+    }
+
+    setupSettings(uuid, instanceId) {
+        this.settings = new Settings.AppletSettings(this, uuid, instanceId);
+        this.settings.bindProperty(
+            Settings.BindingDirection.IN,
+            AD_ICAO_PROP,
+            AD_ICAO_PROP,
+            this.validateIcaoAndRun
+        );
     }
     
     setupScheduler() {
