@@ -21,11 +21,23 @@ class MetarApplet extends Applet.TextApplet {
     
     setupScheduler() {
         this.checkAndRunMetar();
-        // Check every minute
-        Mainloop.timeout_add_seconds(60, () => {
+        const delaySeconds = this.getTimeBeforeNextUpdate();
+        global.log("Next update in "+delaySeconds+" seconds");
+        Mainloop.timeout_add_seconds(delaySeconds, () => {
             this.checkAndRunMetar();
-            return true;
+            
+            Mainloop.timeout_add_seconds(1800, () => {
+                this.checkAndRunMetar();
+                return true; // Repeat
+            });
+            
+            return false; // No repeat for the initial
         });
+    }
+
+    getTimeBeforeNextUpdate() {
+        const minutes = new Date().getUTCMinutes() - CHECK_BUFFER;
+        return Math.min.apply(null, CHECK_TIME.map(t => (60+t-minutes)%60)) * 60;
     }
     
     checkAndRunMetar() {
