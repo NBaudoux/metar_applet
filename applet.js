@@ -30,7 +30,10 @@ class MetarApplet extends Applet.TextApplet {
 
     getTimeBeforeNextUpdate() {
         const minutes = new Date().getUTCMinutes() - CHECK_BUFFER;
-        return Math.min.apply(null, CHECK_TIME.map(t => (60+t-minutes)%60).filter(v => v > 0)) * 60;
+        const diffToMinutes = CHECK_TIME
+            .map(t => (60+t-minutes)%60)
+            .filter(v => v > 0);
+        return Math.min.apply(null, diffToMinutes) * 60;
     }
 
     scheduleNextUpdate() {
