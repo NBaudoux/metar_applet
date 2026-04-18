@@ -19,8 +19,8 @@ class MetarApplet extends Applet.TextApplet {
         
         this.set_applet_label("METAR: Loading...");
         this.set_applet_tooltip("");
-        this.firstExecution = true
         
+        this.runMetar();
         this.setupScheduler();
     }
 
@@ -35,11 +35,26 @@ class MetarApplet extends Applet.TextApplet {
     }
     
     setupScheduler() {
-        this.checkAndRunMetar();
-        // Check every minute
-        Mainloop.timeout_add_seconds(60, () => {
-            this.checkAndRunMetar();
-            return true;
+        const delaySeconds = this.getTimeBeforeNextUpdate();
+        Mainloop.timeout_add_seconds(delaySeconds, () => {
+            this.runMetar();            
+            this.scheduleNextUpdate();
+            return false; // No repeat for the initial delay
+        });
+    }
+
+    getTimeBeforeNextUpdate() {
+        const minutes = new Date().getUTCMinutes() - CHECK_BUFFER;
+        const diffToMinutes = CHECK_TIME
+            .map(t => (60+t-minutes)%60)
+            .filter(v => v > 0);
+        return Math.min.apply(null, diffToMinutes) * 60;
+    }
+
+    scheduleNextUpdate() {
+        Mainloop.timeout_add_seconds(this.getTimeBeforeNextUpdate(), () => {
+            this.runMetar();
+            return true; // Repeat
         });
     }
     
