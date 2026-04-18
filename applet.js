@@ -15,11 +15,11 @@ class MetarApplet extends Applet.TextApplet {
         this.set_applet_label("METAR: Loading...");
         this.set_applet_tooltip("");
         
+        this.runMetar();
         this.setupScheduler();
     }
     
     setupScheduler() {
-        this.runMetar();
         const delaySeconds = this.getTimeBeforeNextUpdate();
         Mainloop.timeout_add_seconds(delaySeconds, () => {
             this.runMetar();            
