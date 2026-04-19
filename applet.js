@@ -93,7 +93,7 @@ class MetarApplet extends Applet.TextApplet {
                 const now = new Date();
                 const hour = now.getUTCHours() < 10 ? "0" + now.getUTCHours() : now.getUTCHours().toString();
                 const minutes = now.getUTCMinutes() < 10 ? "0" + now.getUTCMinutes() : now.getUTCMinutes().toString();
-                this.set_applet_tooltip("Last checked at "+hour+minutes+"Z - Click to update now.");
+                this.set_applet_tooltip("Last checked at "+hour+minutes+"Z - Click to update now.\n"+this.metarLine);
             } else {
                 this.set_applet_label("METAR: Error");
                 this.set_applet_tooltip("Failed to fetch METAR data");
