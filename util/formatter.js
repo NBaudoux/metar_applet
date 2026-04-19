@@ -11,7 +11,11 @@ function formatMetar(metarLine, lineLength) {
 }
 
 function formatZuluTime(date) {
-    const hour = date.getUTCHours() < 10 ? "0" + date.getUTCHours() : date.getUTCHours().toString();
-    const minutes = date.getUTCMinutes() < 10 ? "0" + date.getUTCMinutes() : date.getUTCMinutes().toString();
+    const hour = doubleDigitTime(date.getUTCHours());
+    const minutes = doubleDigitTime(date.getUTCMinutes());
     return hour.toString()+minutes.toString()+"Z";
+}
+
+function doubleDigitTime(time) {
+    return time < 10 ? "0" + time : time.toString();
 }
