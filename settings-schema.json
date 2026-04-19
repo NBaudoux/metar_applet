@@ -3,5 +3,13 @@
         "type" : "entry",
         "default": "EKRK",
         "description": "AD's ICAO you want to get the METAR from"
+    },
+    "LINE_LENGTH": {
+        "type" : "scale",
+        "default": 50,
+        "min": 20,
+        "max": 60,
+        "step": 1,
+        "description": "Length of the METAR's line"
     }
 }

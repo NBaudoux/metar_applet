@@ -11,6 +11,7 @@ const { isValidICAO } = require('./util/icaovalidator');
 const CHECK_TIME = [20, 50];
 const CHECK_BUFFER = 4;
 const AD_ICAO_PROP = "AD_ICAO";
+const LINE_LENGTH_PROP = "LINE_LENGTH";
 
 class MetarApplet extends Applet.TextApplet {
     constructor(metadata, orientation, panelHeight, instanceId) {
@@ -31,6 +32,12 @@ class MetarApplet extends Applet.TextApplet {
             AD_ICAO_PROP,
             AD_ICAO_PROP,
             this.validateIcaoAndRun
+        );
+        this.settings.bindProperty(
+            Settings.BindingDirection.IN,
+            LINE_LENGTH_PROP,
+            LINE_LENGTH_PROP,
+            this.formatMetar
         );
     }
     
