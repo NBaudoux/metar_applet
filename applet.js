@@ -87,17 +87,12 @@ class MetarApplet extends Applet.TextApplet {
             if (success) {
                 const output = stdout.toString().trim();
                 const lines = output.split('\n');
-                const metarLine = lines[0] || output;
-                
-                let displayText = metarLine.substring(0, 50);
-                if (metarLine.length > 50) {
-                    displayText += "...";
-                }
+                this.metarLine = lines[0] || output;
+                this.formatMetar();
                 
                 const now = new Date();
                 const hour = now.getUTCHours() < 10 ? "0" + now.getUTCHours() : now.getUTCHours().toString();
                 const minutes = now.getUTCMinutes() < 10 ? "0" + now.getUTCMinutes() : now.getUTCMinutes().toString();
-                this.set_applet_label(displayText);
                 this.set_applet_tooltip("Last checked at "+hour+minutes+"Z - Click to update now.");
             } else {
                 this.set_applet_label("METAR: Error");
@@ -107,6 +102,18 @@ class MetarApplet extends Applet.TextApplet {
             this.set_applet_label("METAR: Error");
             this.set_applet_tooltip("Error running metar command: " + e.message);
         }
+    }
+
+    formatMetar() {
+        let displayText = this.metarLine.substring(0, this.LINE_LENGTH);
+        if (this.metarLine.length > this.LINE_LENGTH) {
+            const lastSpaceIndex = this.metarLine.substring(0, this.LINE_LENGTH).lastIndexOf(" ");
+            displayText = this.metarLine.substring(0, lastSpaceIndex);
+            displayText += "\n";
+            displayText += this.metarLine.substring(lastSpaceIndex+1, 2 * this.LINE_LENGTH);
+            if (this.metarLine.length > 2 * this.LINE_LENGTH) displayText += "...";
+        }
+        this.set_applet_label(displayText);
     }
     
     on_applet_clicked() {
