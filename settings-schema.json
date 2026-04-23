@@ -1,15 +1,24 @@
 {
+    "UPDATE_CONFIG": {
+        "type": "header",
+        "description": "METAR update"
+    },
     "AD_ICAO": {
         "type" : "entry",
         "default": "EKRK",
         "description": "AD's ICAO you want to get the METAR from"
     },
+    "APPEARANCE_CONFIG": {
+        "type": "header",
+        "description": "Appearance"
+    },
     "LINE_LENGTH": {
-        "type" : "scale",
+        "type" : "spinbutton",
         "default": 50,
         "min": 20,
         "max": 60,
         "step": 1,
+        "units": "characters",
         "description": "Length of the METAR's line"
     },
     "TWO_LINES": {
