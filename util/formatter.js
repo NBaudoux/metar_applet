@@ -1,10 +1,17 @@
-function formatMetar(metarLine, lineLength) {
+function formatMetar(metarLine, lineLength, twoLines) {
     let displayText = metarLine.substring(0, lineLength);
     if (metarLine.length > lineLength) {
         const lastSpaceIndex = metarLine.substring(0, lineLength).lastIndexOf(" ");
         displayText = metarLine.substring(0, lastSpaceIndex);
-        displayText += "\n";
-        displayText += metarLine.substring(lastSpaceIndex+1, 2 * lineLength);
+        
+        if (twoLines) {
+            displayText += "\n";
+            displayText += metarLine.substring(lastSpaceIndex+1, 2 * lineLength);
+        }
+        else {
+            displayText += "...";
+        }
+        
         if (metarLine.length > 2 * lineLength) displayText += "...";
     }
     return displayText;

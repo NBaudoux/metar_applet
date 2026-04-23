@@ -28,6 +28,7 @@ class MetarApplet extends Applet.TextApplet {
         const props = [
             {name: "AD_ICAO", onChanged: this.validateIcaoAndRun}, 
             {name: "LINE_LENGTH", onChanged: this.formatMetar},
+            {name: "TWO_LINES", onChanged: this.formatMetar},
         ];
 
         this.settings = new Settings.AppletSettings(this, uuid, instanceId);
@@ -103,7 +104,7 @@ class MetarApplet extends Applet.TextApplet {
     }
 
     formatMetar() {
-        this.set_applet_label(formatMetar(this.metarLine, this.LINE_LENGTH));
+        this.set_applet_label(formatMetar(this.metarLine, this.LINE_LENGTH, this.TWO_LINES));
     }
     
     on_applet_clicked() {
