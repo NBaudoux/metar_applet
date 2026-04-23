@@ -11,8 +11,6 @@ const { formatMetar, formatZuluTime } = require('./util/formatter');
 
 const CHECK_TIME = [20, 50];
 const CHECK_BUFFER = 4;
-const AD_ICAO_PROP = "AD_ICAO";
-const LINE_LENGTH_PROP = "LINE_LENGTH";
 
 class MetarApplet extends Applet.TextApplet {
     constructor(metadata, orientation, panelHeight, instanceId) {
@@ -27,19 +25,20 @@ class MetarApplet extends Applet.TextApplet {
     }
 
     setupSettings(uuid, instanceId) {
+        const props = [
+            {name: "AD_ICAO", onChanged: this.validateIcaoAndRun}, 
+            {name: "LINE_LENGTH", onChanged: this.formatMetar},
+        ];
+
         this.settings = new Settings.AppletSettings(this, uuid, instanceId);
-        this.settings.bindProperty(
-            Settings.BindingDirection.IN,
-            AD_ICAO_PROP,
-            AD_ICAO_PROP,
-            this.validateIcaoAndRun
-        );
-        this.settings.bindProperty(
-            Settings.BindingDirection.IN,
-            LINE_LENGTH_PROP,
-            LINE_LENGTH_PROP,
-            this.formatMetar
-        );
+        props.forEach((prop) => {
+            this.settings.bindProperty(
+                Settings.BindingDirection.IN,
+                prop.name,
+                prop.name,
+                prop.onChanged
+            );
+        })
     }
     
     setupScheduler() {
