@@ -7,7 +7,7 @@ const Settings = imports.ui.settings;
 
 // Custom imports
 const { isValidICAO } = require('./util/icaovalidator');
-const { isValidMinutes } = require('./util/icaovalidator');
+const { isValidMinutes } = require('./util/timevalidator');
 const { formatMetar, formatZuluTime } = require('./util/formatter');
 
 class MetarApplet extends Applet.TextApplet {
