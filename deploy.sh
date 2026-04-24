@@ -6,3 +6,6 @@ cp -r settings-schema.json ~/.local/share/cinnamon/applets/metar_applet@local/se
 
 mkdir -p ~/.local/share/cinnamon/applets/metar_applet@local/util
 cp -a util/. ~/.local/share/cinnamon/applets/metar_applet@local/util/
+
+mkdir -p ~/.local/share/cinnamon/applets/metar_applet@local/config
+cp -a config/. ~/.local/share/cinnamon/applets/metar_applet@local/config/

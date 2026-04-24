@@ -6,6 +6,7 @@ const GLib = imports.gi.GLib;
 const Settings = imports.ui.settings;
 
 // Custom imports
+const { Strings } = require('./config/strings');
 const { isValidICAO } = require('./util/icaovalidator');
 const { isValidMinutes } = require('./util/timevalidator');
 const { formatMetar, formatZuluTime } = require('./util/formatter');
@@ -17,7 +18,7 @@ class MetarApplet extends Applet.TextApplet {
         super(orientation, panelHeight, instanceId);
         this.setupSettings(metadata["uuid"], instanceId);
         
-        this.set_applet_label("METAR: Loading...");
+        this.set_applet_label(Strings.METAR_LOADING);
         this.set_applet_tooltip("");
         
         this.runMetar();
@@ -69,9 +70,8 @@ class MetarApplet extends Applet.TextApplet {
             .filter(time => time < 60);
 
         if (!isValidMinutes(checkTimes)) {
-            this.set_applet_label("METAR: Error.")
-            this.set_applet_tooltip("The observation minutes must be a comma-separated list (e.g. 20,50)")
-            return;
+            this.set_applet_label(Strings.METAR_ERROR);
+            this.set_applet_tooltip(Strings.HELP_OBSERVATION_TOOLTIP);
             return DEFAULT_UPDATE_TIME;
         }
 
@@ -106,14 +106,21 @@ class MetarApplet extends Applet.TextApplet {
                 this.formatMetar();
                 
                 const zuluTime = formatZuluTime(new Date());
-                this.set_applet_tooltip("Last checked at "+zuluTime+" - Click to update now.\n"+this.metarLine);
+                this.set_applet_tooltip(
+                    Strings.LAST_CHECKED 
+                    + zuluTime 
+                    + " - " 
+                    + Strings.UPDATE_NOW 
+                    + "\n" 
+                    + this.metarLine
+                );
             } else {
-                this.set_applet_label("METAR: Error");
-                this.set_applet_tooltip("Failed to fetch METAR data");
+                this.set_applet_label(Strings.METAR_ERROR);
+                this.set_applet_tooltip(Strings.FAILED_FETCH);
             }
         } catch (e) {
-            this.set_applet_label("METAR: Error");
-            this.set_applet_tooltip("Error running metar command: " + e.message);
+            this.set_applet_label(Strings.METAR_ERROR);
+            this.set_applet_tooltip(Strings.FAILED_RUNNING + e.message);
         }
     }
 
