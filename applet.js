@@ -90,8 +90,9 @@ class MetarApplet extends Applet.TextApplet {
     }
 
     validateIcaoAndRun(id){
-        if(!isValidICAO(id)) return;
-        this.runMetar();
+        if (isValidICAO(id)) {
+            this.runMetar();
+        }
     }
     
     runMetar() {
