@@ -1,3 +1,3 @@
 function isValidMinutes(checkTimes) {
-    return checkTimes.some(v => !Number.isInteger(v));
+    return checkTimes.every(v => Number.isInteger(v));
 }
