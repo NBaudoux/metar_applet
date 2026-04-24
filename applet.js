@@ -7,6 +7,7 @@ const Settings = imports.ui.settings;
 
 // Custom imports
 const { isValidICAO } = require('./util/icaovalidator');
+const { isValidMinutes } = require('./util/icaovalidator');
 const { formatMetar, formatZuluTime } = require('./util/formatter');
 
 class MetarApplet extends Applet.TextApplet {
@@ -42,6 +43,8 @@ class MetarApplet extends Applet.TextApplet {
     }
     
     setupScheduler() {
+        this.resetMainloop();
+
         const delaySeconds = this.getTimeBeforeNextUpdate();
         Mainloop.timeout_add_seconds(delaySeconds, () => {
             this.runMetar();            
@@ -50,16 +53,34 @@ class MetarApplet extends Applet.TextApplet {
         });
     }
 
+    resetMainloop() {
+        if (this.timeoutId) {
+            Mainloop.source_remove(this.timeoutId);
+            this.timeoutId = null;
+        }
+    }
+
     getTimeBeforeNextUpdate() {
-        const minutes = new Date().getUTCMinutes() - CHECK_BUFFER;
-        const diffToMinutes = CHECK_TIME
+        const checkTimes = this.OBSERVATION_TIMES
+            .split(",")
+            .map(time => Number.parseInt(time))
+            .filter(time => time < 60);
+
+        if (!isValidMinutes(checkTimes)) {
+            this.set_applet_label("METAR: Error.")
+            this.set_applet_tooltip("The observation minutes must be a comma-separated list (e.g. 20,50)")
+            return;
+        }
+
+        const minutes = new Date().getUTCMinutes() - this.UPDATE_DELAY;
+        const diffToMinutes = checkTimes
             .map(t => (60+t-minutes)%60)
             .filter(v => v > 0);
         return Math.min.apply(null, diffToMinutes) * 60;
     }
 
     scheduleNextUpdate() {
-        Mainloop.timeout_add_seconds(this.getTimeBeforeNextUpdate(), () => {
+        this.timeoutId = Mainloop.timeout_add_seconds(this.getTimeBeforeNextUpdate(), () => {
             this.runMetar();
             return true; // Repeat
         });
