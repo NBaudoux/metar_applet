@@ -7,6 +7,20 @@
         "type" : "entry",
         "default": "EKRK",
         "description": "AD's ICAO you want to get the METAR from"
+    },    
+    "OBSERVATION_TIMES": {
+        "type" : "entry",
+        "default": "20,50",
+        "description": "Comma-separated list of minutes in an hour when the observation are made"
+    },
+    "UPDATE_DELAY": {
+        "type" : "spinbutton",
+        "default": 4,
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "units": "minutes",
+        "description": "Delay between METAR's observation & update time"
     },
     "APPEARANCE_CONFIG": {
         "type": "header",

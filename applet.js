@@ -26,6 +26,8 @@ class MetarApplet extends Applet.TextApplet {
             {name: "AD_ICAO", onChanged: this.validateIcaoAndRun}, 
             {name: "LINE_LENGTH", onChanged: this.formatMetar},
             {name: "TWO_LINES", onChanged: this.formatMetar},
+            {name: "OBSERVATION_TIMES", onChanged: this.setupScheduler}, 
+            {name: "UPDATE_DELAY", onChanged: this.setupScheduler}, 
         ];
 
         this.settings = new Settings.AppletSettings(this, uuid, instanceId);
