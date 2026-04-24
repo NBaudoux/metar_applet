@@ -65,16 +65,6 @@ class MetarApplet extends Applet.TextApplet {
             return true; // Repeat
         });
     }
-    
-    checkAndRunMetar() {
-        const now = new Date();
-        const minutes = now.getUTCMinutes() - CHECK_BUFFER;
-
-        if (CHECK_TIME.includes(minutes) || this.firstExecution) {
-            this.runMetar();
-            this.firstExecution = false;
-        }
-    }
 
     validateIcaoAndRun(id){
         if(!isValidICAO(id)) return;
