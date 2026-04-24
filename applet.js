@@ -47,12 +47,9 @@ class MetarApplet extends Applet.TextApplet {
     
     setupScheduler() {
         this.resetMainloop();
-
-        const delaySeconds = this.getTimeBeforeNextUpdate();
-        Mainloop.timeout_add_seconds(delaySeconds, () => {
+        this.timeoutId = Mainloop.timeout_add_seconds(this.getTimeBeforeNextUpdate(), () => {
             this.runMetar();            
-            this.scheduleNextUpdate();
-            return false; // No repeat for the initial delay
+            return true;
         });
     }
 
@@ -80,13 +77,6 @@ class MetarApplet extends Applet.TextApplet {
             .map(t => (60+t-minutes)%60)
             .filter(v => v > 0);
         return Math.min.apply(null, diffToMinutes) * 60;
-    }
-
-    scheduleNextUpdate() {
-        this.timeoutId = Mainloop.timeout_add_seconds(this.getTimeBeforeNextUpdate(), () => {
-            this.runMetar();
-            return true; // Repeat
-        });
     }
 
     validateIcaoAndRun(id){
