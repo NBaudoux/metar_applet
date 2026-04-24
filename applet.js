@@ -9,9 +9,6 @@ const Settings = imports.ui.settings;
 const { isValidICAO } = require('./util/icaovalidator');
 const { formatMetar, formatZuluTime } = require('./util/formatter');
 
-const CHECK_TIME = [20, 50];
-const CHECK_BUFFER = 4;
-
 class MetarApplet extends Applet.TextApplet {
     constructor(metadata, orientation, panelHeight, instanceId) {
         super(orientation, panelHeight, instanceId);
