@@ -10,6 +10,8 @@ const { isValidICAO } = require('./util/icaovalidator');
 const { isValidMinutes } = require('./util/timevalidator');
 const { formatMetar, formatZuluTime } = require('./util/formatter');
 
+const DEFAULT_UPDATE_TIME = 30;
+
 class MetarApplet extends Applet.TextApplet {
     constructor(metadata, orientation, panelHeight, instanceId) {
         super(orientation, panelHeight, instanceId);
@@ -70,6 +72,7 @@ class MetarApplet extends Applet.TextApplet {
             this.set_applet_label("METAR: Error.")
             this.set_applet_tooltip("The observation minutes must be a comma-separated list (e.g. 20,50)")
             return;
+            return DEFAULT_UPDATE_TIME;
         }
 
         const minutes = new Date().getUTCMinutes() - this.UPDATE_DELAY;
