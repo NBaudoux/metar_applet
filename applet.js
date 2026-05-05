@@ -94,6 +94,7 @@ class MetarApplet extends Applet.TextApplet {
                 const output = stdout.toString().trim();
                 const lines = output.split('\n');
                 this.metarLine = lines[0] || output;
+                this.lastUpdateTime = new Date();
                 this.formatMetar();
                 this.updateTooltip();
             } else {
@@ -112,7 +113,7 @@ class MetarApplet extends Applet.TextApplet {
 
     updateTooltip() {
         const now = new Date();
-        const zuluTime = formatZuluTime(now);
+        const zuluTime = formatZuluTime(this.lastUpdateTime);
         const nextUpdateTime = formatZuluTime(new Date(now.getTime() + this.getTimeBeforeNextUpdate() * 1000))
         this.set_applet_tooltip(
             this.metarLine
