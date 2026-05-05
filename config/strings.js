@@ -5,5 +5,6 @@ const Strings = {
     LAST_CHECKED: "Last checked at ",
     METAR_ERROR: "METAR: Error",
     METAR_LOADING: "METAR: Loading...",
+    NEXT_UPDATE_AT: "Next update at ",
     UPDATE_NOW: "Click to update now."
 };

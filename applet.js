@@ -95,14 +95,19 @@ class MetarApplet extends Applet.TextApplet {
                 this.metarLine = lines[0] || output;
                 this.formatMetar();
                 
-                const zuluTime = formatZuluTime(new Date());
+                const now = new Date();
+                const zuluTime = formatZuluTime(now);
+                const nextUpdateTime = formatZuluTime(new Date(now.getTime() + this.getTimeBeforeNextUpdate() * 1000))
                 this.set_applet_tooltip(
-                    Strings.LAST_CHECKED 
+                    this.metarLine
+                    + "\n"
+                    + Strings.LAST_CHECKED 
                     + zuluTime 
                     + " - " 
-                    + Strings.UPDATE_NOW 
+                    + Strings.NEXT_UPDATE_AT
+                    + nextUpdateTime
                     + "\n" 
-                    + this.metarLine
+                    + Strings.UPDATE_NOW 
                 );
             } else {
                 this.set_applet_label(Strings.METAR_ERROR);
