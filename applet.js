@@ -3,83 +3,129 @@ const St = imports.gi.St;
 const Util = imports.misc.util;
 const Mainloop = imports.mainloop;
 const GLib = imports.gi.GLib;
+const Settings = imports.ui.settings;
 
-const CHECK_TIME = [20, 50];
-const CHECK_BUFFER = 4;
-const AD_ICAO = "EKRK"
+// Custom imports
+const { Strings } = require('./config/strings');
+const { isValidICAO } = require('./util/icaovalidator');
+const { isValidMinutes } = require('./util/timevalidator');
+const { formatMetar, formatZuluTime } = require('./util/formatter');
+
+const DEFAULT_UPDATE_TIME = 30;
 
 class MetarApplet extends Applet.TextApplet {
     constructor(metadata, orientation, panelHeight, instanceId) {
         super(orientation, panelHeight, instanceId);
+        this.setupSettings(metadata["uuid"], instanceId);
         
-        this.set_applet_label("METAR: Loading...");
+        this.set_applet_label(Strings.METAR_LOADING);
         this.set_applet_tooltip("");
         
         this.runMetar();
         this.setupScheduler();
     }
+
+    setupSettings(uuid, instanceId) {
+        const props = [
+            {name: "AD_ICAO", onChanged: this.validateIcaoAndRun}, 
+            {name: "LINE_LENGTH", onChanged: this.formatMetar},
+            {name: "TWO_LINES", onChanged: this.formatMetar},
+            {name: "OBSERVATION_TIMES", onChanged: this.setupScheduler}, 
+            {name: "UPDATE_DELAY", onChanged: this.setupScheduler}, 
+        ];
+
+        this.settings = new Settings.AppletSettings(this, uuid, instanceId);
+        props.forEach((prop) => {
+            this.settings.bindProperty(
+                Settings.BindingDirection.IN,
+                prop.name,
+                prop.name,
+                prop.onChanged
+            );
+        })
+    }
     
     setupScheduler() {
-        const delaySeconds = this.getTimeBeforeNextUpdate();
-        Mainloop.timeout_add_seconds(delaySeconds, () => {
+        this.resetMainloop();
+        this.timeoutId = Mainloop.timeout_add_seconds(this.getTimeBeforeNextUpdate(), () => {
             this.runMetar();            
-            this.scheduleNextUpdate();
-            return false; // No repeat for the initial delay
+            return true;
         });
     }
 
+    resetMainloop() {
+        if (this.timeoutId) {
+            Mainloop.source_remove(this.timeoutId);
+            this.timeoutId = null;
+            this.updateTooltip();
+        }
+    }
+
     getTimeBeforeNextUpdate() {
-        const minutes = new Date().getUTCMinutes() - CHECK_BUFFER;
-        const diffToMinutes = CHECK_TIME
+        const checkTimes = this.OBSERVATION_TIMES
+            .split(",")
+            .map(time => Number.parseInt(time))
+            .filter(time => time < 60);
+
+        if (!isValidMinutes(checkTimes)) {
+            this.set_applet_label(Strings.METAR_ERROR);
+            this.set_applet_tooltip(Strings.HELP_OBSERVATION_TOOLTIP);
+            return DEFAULT_UPDATE_TIME;
+        }
+
+        const minutes = new Date().getUTCMinutes() - this.UPDATE_DELAY;
+        const diffToMinutes = checkTimes
             .map(t => (60+t-minutes)%60)
             .filter(v => v > 0);
         return Math.min.apply(null, diffToMinutes) * 60;
     }
 
-    scheduleNextUpdate() {
-        Mainloop.timeout_add_seconds(this.getTimeBeforeNextUpdate(), () => {
+    validateIcaoAndRun(id){
+        if (isValidICAO(id)) {
             this.runMetar();
-            return true; // Repeat
-        });
-    }
-    
-    checkAndRunMetar() {
-        const now = new Date();
-        const minutes = now.getUTCMinutes() - CHECK_BUFFER;
-
-        if (CHECK_TIME.includes(minutes) || this.firstExecution) {
-            this.runMetar();
-            this.firstExecution = false;
         }
     }
     
     runMetar() {
         try {
-            let [success, stdout, stderr, exitCode] = GLib.spawn_command_line_sync("metar "+AD_ICAO);
+            let [success, stdout, stderr, exitCode] = GLib.spawn_command_line_sync("metar "+this.AD_ICAO);
             
             if (success) {
                 const output = stdout.toString().trim();
                 const lines = output.split('\n');
-                const metarLine = lines[0] || output;
-                
-                let displayText = metarLine.substring(0, 50);
-                if (metarLine.length > 50) {
-                    displayText += "...";
-                }
-                
-                const now = new Date();
-                const hour = now.getUTCHours() < 10 ? "0" + now.getUTCHours() : now.getUTCHours().toString();
-                const minutes = now.getUTCMinutes() < 10 ? "0" + now.getUTCMinutes() : now.getUTCMinutes().toString();
-                this.set_applet_label(displayText);
-                this.set_applet_tooltip("Last checked at "+hour+minutes+"Z - Click to update now.");
+                this.metarLine = lines[0] || output;
+                this.lastUpdateTime = new Date();
+                this.formatMetar();
+                this.updateTooltip();
             } else {
-                this.set_applet_label("METAR: Error");
-                this.set_applet_tooltip("Failed to fetch METAR data");
+                this.set_applet_label(Strings.METAR_ERROR);
+                this.set_applet_tooltip(Strings.FAILED_FETCH);
             }
         } catch (e) {
-            this.set_applet_label("METAR: Error");
-            this.set_applet_tooltip("Error running metar command: " + e.message);
+            this.set_applet_label(Strings.METAR_ERROR);
+            this.set_applet_tooltip(Strings.FAILED_RUNNING + e.message);
         }
+    }
+
+    formatMetar() {
+        this.set_applet_label(formatMetar(this.metarLine, this.LINE_LENGTH, this.TWO_LINES));
+    }
+
+    updateTooltip() {
+        const now = new Date();
+        const zuluTime = formatZuluTime(this.lastUpdateTime);
+        const nextUpdateTime = formatZuluTime(new Date(now.getTime() + this.getTimeBeforeNextUpdate() * 1000))
+        this.set_applet_tooltip(
+            this.metarLine
+            + "\n"
+            + Strings.LAST_CHECKED 
+            + zuluTime 
+            + " - " 
+            + Strings.NEXT_UPDATE_AT
+            + nextUpdateTime
+            + "\n" 
+            + Strings.UPDATE_NOW 
+        );
     }
     
     on_applet_clicked() {
