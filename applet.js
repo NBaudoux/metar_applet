@@ -94,21 +94,7 @@ class MetarApplet extends Applet.TextApplet {
                 const lines = output.split('\n');
                 this.metarLine = lines[0] || output;
                 this.formatMetar();
-                
-                const now = new Date();
-                const zuluTime = formatZuluTime(now);
-                const nextUpdateTime = formatZuluTime(new Date(now.getTime() + this.getTimeBeforeNextUpdate() * 1000))
-                this.set_applet_tooltip(
-                    this.metarLine
-                    + "\n"
-                    + Strings.LAST_CHECKED 
-                    + zuluTime 
-                    + " - " 
-                    + Strings.NEXT_UPDATE_AT
-                    + nextUpdateTime
-                    + "\n" 
-                    + Strings.UPDATE_NOW 
-                );
+                this.updateTooltip();
             } else {
                 this.set_applet_label(Strings.METAR_ERROR);
                 this.set_applet_tooltip(Strings.FAILED_FETCH);
@@ -121,6 +107,23 @@ class MetarApplet extends Applet.TextApplet {
 
     formatMetar() {
         this.set_applet_label(formatMetar(this.metarLine, this.LINE_LENGTH, this.TWO_LINES));
+    }
+
+    updateTooltip() {
+        const now = new Date();
+        const zuluTime = formatZuluTime(now);
+        const nextUpdateTime = formatZuluTime(new Date(now.getTime() + this.getTimeBeforeNextUpdate() * 1000))
+        this.set_applet_tooltip(
+            this.metarLine
+            + "\n"
+            + Strings.LAST_CHECKED 
+            + zuluTime 
+            + " - " 
+            + Strings.NEXT_UPDATE_AT
+            + nextUpdateTime
+            + "\n" 
+            + Strings.UPDATE_NOW 
+        );
     }
     
     on_applet_clicked() {
