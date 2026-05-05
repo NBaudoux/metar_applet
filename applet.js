@@ -57,6 +57,7 @@ class MetarApplet extends Applet.TextApplet {
         if (this.timeoutId) {
             Mainloop.source_remove(this.timeoutId);
             this.timeoutId = null;
+            this.updateTooltip();
         }
     }
 
