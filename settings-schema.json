@@ -11,7 +11,7 @@
     "OBSERVATION_TIMES": {
         "type" : "entry",
         "default": "20,50",
-        "description": "Comma-separated list of minutes in an hour when the observation are made"
+        "description": "Comma-separated list of minutes in an hour when the observations are made"
     },
     "UPDATE_DELAY": {
         "type" : "spinbutton",
